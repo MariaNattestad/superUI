@@ -1,0 +1,62 @@
+<!doctype html>
+
+<head>
+	<link rel="stylesheet" href="SuperUI.css" />
+</head>
+
+<body>
+
+	<div id="UI_container"></div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
+	<script src="SuperUI.js"></script>
+	<script>
+
+
+	var Widget = function(opts) {
+		this.reset_styles();
+		this.draw();
+	}
+
+	Widget.prototype.style_schema = function() {
+		var styles = [
+			{name:"a color", type:"color", default:"white"},
+			{name:"a number", type:"number", default:2},
+			{name:"a percentage", type:"percentage", default:0.0015, min:0, max:0.1, step:0.0005},
+			
+		];
+
+		return styles;
+	}
+
+	Widget.prototype.reset_styles = function() {
+		var style_schema = this.style_schema();
+		this.styles = {};
+		for (var i in style_schema) {
+			this.styles[style_schema[i].name] = style_schema[i].default;
+		}
+	}
+
+	Widget.prototype.set_style = function(style,value) {
+		
+		this.styles[style] = value;
+
+		this.draw();
+	}
+
+
+	Widget.prototype.draw = function() {
+		
+		console.log("Refreshing Widget with styles:");
+		console.log(this.styles);
+	}
+
+
+	var myThing = new Widget();
+
+	d3.select("#UI_container").call(d3.superUI().object(myThing));
+
+
+	</script>
+
+</body>
