@@ -80,7 +80,7 @@ d3.superUI = function() {
 			.append("td").attr("class","superUI-value")
 				.append("input")
 					.attr("type","checkbox")
-					.property("checked",my.current_style)
+					.property("checked", my.current_style)
 					.on("change",function(d) {
 						my_object.set_style(d.name,this.checked);
 					});
@@ -106,21 +106,21 @@ d3.superUI = function() {
 
 		// Selections
 		var selector = rows.filter(function(d) {return d.type=="selection"})
-			.append("select").attr("class","superUI-value form-control");
+			.append("td").attr("class","superUI-value")
+			.append("select").attr("class","form-control");
 
 		selector.selectAll("option.set").data(function(d) {return d.options}).enter()
 			.append("option")
 				.attr("class","set")
 				.text(function(d,i){return d})
-				.property("value",function(d,i){return i})
-				.property("selected",function(d,i){return i===0});
+				.property("value",function(d,i){return d});
 
 		selector.on('change', function(d) {
 			var index = this.options[this.selectedIndex].value;
 			if (index !== -1) {
 				my_object.set_style(d.name,this.value);
 			}
-		})
+		});
 
 		// DEFAULTS
 		rows.append("td").attr("class","superUI-default")
@@ -132,6 +132,11 @@ d3.superUI = function() {
 						my_object.set_style(d.name, d.default);
 						my.update_values(d.name);
 					});
+
+
+		// Apply initial values:
+		style_schema.map(function(d) {my.update_values(d.name)});
+
 	};
 
 	my.show_default = function(d) {
@@ -152,23 +157,36 @@ d3.superUI = function() {
 		return d.default;
 	}
 	my.update_values = function(style) {
-		// console.log("update_values");
 		element.selectAll("td.superUI-value input")
 			.filter(function(d) {return d.name==style && d.type != "color"})
 				.property("value",my.current_style);
 
 		element.selectAll("td.superUI-value textarea")
+			.filter(function(d) {return d.name==style})
 			.property("value",my.current_style);
+
+		element.selectAll("td.superUI-value input")
+			.filter(function(d) {return d.name==style && d.type != "checkbox"})
+				.property("checked",my.current_style);
+
+		element.selectAll("td.superUI-value select")
+			.filter(function(d) {return d.name==style})
+				.selectAll("option.set").property("selected", function(d, i) {
+					return d===my.current_style({name: style})
+				});
 	}
 
-	my.current_style = function(d) {
+	my.current_style = function(d, i) {
 		var style = my_object.styles[d.name];
-		if (style == "black") {
-			return "#000000";
+		if (d.type == "color") {
+			if (style == "black") {
+				return "#000000";
+			}
+			if (style == "white") {
+				return "#ffffff";
+			}
 		}
-		if (style == "white") {
-			return "#ffffff";
-		}
+		
 		if (d.type == "percentage") {
 			return style*100.0;
 		}
