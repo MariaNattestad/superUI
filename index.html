@@ -20,9 +20,12 @@
 
 	Widget.prototype.style_schema = function() {
 		var styles = [
+			{name: "a section header", type:"section"},
 			{name:"a color", type:"color", default:"white"},
 			{name:"a number", type:"number", default:2},
 			{name:"a percentage", type:"percentage", default:0.0015, min:0, max:0.1, step:0.0005},
+			{name: "another section header", type:"section"},
+			{name:"a string", type:"string", default:"hello"},
 			{name:"a range", type:"range", default:2},
 			{name:"a bool", type:"bool", default:true},
 			{name:"a selection", type:"selection", default:"B", options: ["A","B","C","D"]},

@@ -22,9 +22,9 @@ d3.superUI = function() {
 		table.append("tr").attr("class","d3-superUI-header-row").selectAll("th").data(["Style","Set","Reset"]).enter().append("th").text(function(d){return d});
 
 		var rows = table.selectAll("tr.d3-superUI-row").data(style_schema).enter().append("tr").attr("class","d3-superUI-row");
-		rows.filter(function(d) {return d.type !== "colorscale"})
-				.append("td").attr("class","superUI-variable").html(function(d) {return d.name + ":"});
-		
+		rows.filter(function(d) {return d.type !== "colorscale" && d.type !== "section"})
+			.append("td").attr("class","superUI-variable").html(function(d) {return d.name + ":"});
+
 		// Numbers
 		rows.filter(function(d) {return d.type=="number"})
 			.append("td").attr("class","superUI-value")
@@ -39,9 +39,19 @@ d3.superUI = function() {
 						for (var i in at) {
 							if (d[at[i]] != undefined) {
 								d3.select(this).attr(at[i],d[at[i]]);
-							}	
+							}
 						}
 					});
+
+		// Strings
+		rows.filter(function(d) {return d.type=="string"})
+			.append("td").attr("class","superUI-value")
+				.append("input")
+					.attr("type","text")
+					.property("value",my.current_style)
+					.on("change",function(d) {
+						my_object.set_style(d.name,this.value);
+					})
 
 		// Ranges
 		rows.filter(function(d) {return d.type=="range"})
@@ -104,6 +114,14 @@ d3.superUI = function() {
 			)
 		});
 
+		// Section headers
+		rows.filter(function(d) {return d.type=="section"})
+			.append("th")
+				.attr("class","superUI-section-header")
+				.attr("colspan","3")
+				.html(function(d) {return d.name});
+
+
 		// Selections
 		var selector = rows.filter(function(d) {return d.type=="selection"})
 			.append("td").attr("class","superUI-value")
@@ -124,7 +142,7 @@ d3.superUI = function() {
 
 		// DEFAULTS
 		rows.append("td").attr("class","superUI-default")
-			.filter(function(d) {return d.type !== "colorscale"})
+			.filter(function(d) {return d.type !== "colorscale" && d.type !== "section"})
 				.append("button")
 					.html(my.show_default)
 					.attr("class","btn btn-xs btn-default")

@@ -33,3 +33,11 @@
 .superColorScaleUI textarea {
 	font-size: 12px;
 }
+
+.d3-superUI-table .superUI-value {
+	width: 80px;
+}
+
+.d3-superUI-table .superUI-section-header {
+	padding-top: 2vmin;
+}
